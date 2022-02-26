@@ -1,22 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:english_words/english_words.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(new MaterialApp(
+    title: 'Navigation Basics',
+    home: new FirstScreen(),
+  ));
+}
 
-class MyApp extends StatelessWidget {
+class FirstScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final wordPair = WordPair.random();
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('First Screen'),
+      ),
+      body: new Center(
+        child: new RaisedButton(
+          child: new Text('Launch new screen'),
+          onPressed: () {
+            Navigator.push(
+              context,
+              new MaterialPageRoute(builder: (context) => new SecondScreen()),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
 
-    return MaterialApp(
-      title: 'Welcome to Flutter',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Welcome to Flutter'),
-        ),
-        body: Center(
-          child: new RandomWords(),
-        ),
+class SecondScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text("Second Screen"),
+      ),
+      body: new Center(
+          child: new RandomWords()
       ),
     );
   }
@@ -28,14 +49,12 @@ class RandomWords extends StatefulWidget {
 }
 
 class RandomWordsState extends State<RandomWords> {
-  final _suggestions = <WordPair>[];
+  final _suggestions = new List<String>.generate(200, (i) => "Item $i");
   final _biggerFont = const TextStyle(fontSize: 18.0);
+  final list = ["111 one", "222 two", "333 three", "444 four","111 one", "222 two", "333 three", "444 four","111 one", "222 two", "333 three", "444 four","111 one", "222 two", "333 three", "444 four"];
   @override
   Widget build(BuildContext context) {
     return new Scaffold (
-      appBar: new AppBar(
-        title: new Text('Startup Name Generator'),
-      ),
       body: _buildSuggestions(),
     );
   }
@@ -48,28 +67,38 @@ class RandomWordsState extends State<RandomWords> {
         // 在奇数行，该函数会添加一个分割线widget，来分隔相邻的词对。
         // 注意，在小屏幕上，分割线看起来可能比较吃力。
         itemBuilder: (context, i) {
-          // 在每一列之前，添加一个1像素高的分隔线widget
-          if (i.isOdd) return new Divider();
-
-          // 语法 "i ~/ 2" 表示i除以2，但返回值是整形（向下取整），比如i为：1, 2, 3, 4, 5
-          // 时，结果为0, 1, 1, 2, 2， 这可以计算出ListView中减去分隔线后的实际单词对数量
-          final index = i ~/ 2;
-          // 如果是建议列表中最后一个单词对
-          if (index >= _suggestions.length) {
-            // ...接着再生成10个单词对，然后添加到建议列表
-            _suggestions.addAll(generateWordPairs().take(10));
-          }
-          return _buildRow(_suggestions[index]);
+          return _buildRow(i, _suggestions[i]);
         }
     );
   }
 
-  Widget _buildRow(WordPair pair) {
+  Widget _buildRow(int i, String text) {
     return new ListTile(
-      title: new Text(
-        pair.asPascalCase,
-        style: _biggerFont,
+      title: new Row(children: <Widget>[
+        Text(i.toString()),
+        for(var item in list ) _containerText(item)
+
+      ],)
+    );
+  }
+
+  Widget _containerText(String text){
+    return Container(
+      margin: EdgeInsets.only(left: 5, top: 5),
+      //设置 child 居中
+      alignment: Alignment(0, 0),
+      // height: 50,
+      // width: 300,
+      //边框设置
+      decoration: new BoxDecoration(
+        //背景
+        color: Colors.white,
+        //设置四周圆角 角度
+        borderRadius: BorderRadius.all(Radius.circular(4.0)),
+        //设置四周边框
+        border: new Border.all(width: 1, color: Colors.red),
       ),
+      child: Column(children: <Widget>[Text(text),Text(text),Text(text),Text(text)],),
     );
   }
 }
